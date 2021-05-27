@@ -1,8 +1,11 @@
 # Algorand Vanity address farming tool
-This automated Algorand vanity address farming tool written in Python makes it easy to look for a single or multiple interesting vanity addresses to be used on the Algorand blockchain. The tools require that the Algorand SDK for Python is installed. Get the SDK with:
-```bash
-pip3 install py-algorand-sdk
-```
+This automated Algorand vanity address farming tool written in Python makes it easy to look for a single or multiple interesting vanity addresses to be used on the Algorand blockchain. The tools require that the Algorand SDK for Python is installed to generate the public/private key pair.
+
+## Prerequisites
+* `python3.x`
+* `pip3`
+* `py-algorand-sdk`
+
 To run the farming tool simply open a terminal window in the folder where the tools are located and type:
 ```bash
 python vanity_farmer.py
