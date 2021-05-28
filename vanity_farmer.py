@@ -27,6 +27,9 @@ def make_vanity_wallet( printing = True):
     global beginning
     anyplace = False
     beginning = False
+    delta_counter = 0
+    delta_sum = 0
+    
     while(1):
 
         found_first = [False]*len(vanities)
@@ -36,6 +39,8 @@ def make_vanity_wallet( printing = True):
             previous = current
             current = time.time()
             delta = current - previous
+            delta_sum = delta_sum + delta
+            delta_counter = delta_counter + 1
             counter = counter + 1
 
             if time.time() >= 1 + timer:
@@ -53,7 +58,13 @@ def make_vanity_wallet( printing = True):
                     print("\n\nTime  : %d:%s m"%(minutes,str(minsec).zfill(2)))
                 else:
                     print("\n\nTime  : %d:%s h"%(hours,str(hourmin).zfill(2)))
-                print("Speed : {} addr/s".format(int(1/delta)))
+                try:
+                    print("Speed : {} addr/s".format(int(1/(delta_sum/delta_counter))))
+                    delta_counter = 0
+                    delta_sum = 0
+                    
+                except ZeroDivisionError:
+                    print("Speed : calculating..")
 
                 if counter < 1000000:
                     print("Tried : {} k addr".format(int(counter/1000)))
