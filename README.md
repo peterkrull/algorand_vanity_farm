@@ -20,4 +20,4 @@ The browser will guide you through the process to make finding the right one eas
 
 ## Speed of farming
 
-The tools were tested on a Linux PC using an i5 3570k processor @ 4.2 GHz and could comb through *59.2 k (thousand) addresses/s using all 4 cores and 14.8 k addresses/s on each single core*. It is not advised to run multiple instances if the frequency of finding addresses is high, as all instances read and write to the same file, making room for error. This might be something i will look in to as well as native multi-threading support.
+The tools were tested on a Linux PC using an i5 3570k processor @ 4.2 GHz and could comb through *58 k (thousand) addresses/s using all 4 cores*. Because of this speed, it is not advised to look for addresses with a vanity pattern that is too short, since this can cause too frequent file saves, and thus corrupt the file. Try to at least look for 4 character vanities.
