@@ -1,8 +1,15 @@
+# vanity_browser.py - lets you browse through the addresses found with vanity_farmer.py
+#
+# Depends on py-algorand-sdk which can be installed with:
+#
+# pip3 install py-algorand-sdk
+#
+# If you don't have pip3 you can install it with:
+#
+# apt install python3-pip
+
 import json
 import algosdk
-from nacl.exceptions import InvalidkeyError
-
-file_data = ""
 
 def program():
     open_file()
@@ -12,6 +19,7 @@ def program():
 
 def open_file():
     global file_data
+    file_data = ""
     try:
         file_data = json.load(open("vanity_addresses",'r'))
     except FileNotFoundError as e:
@@ -26,12 +34,29 @@ def present_names():
     for vanity in file_data:
         names.append(vanity)
     for i in range(len(names)):
-        print("Found :",names[i],len(file_data[names[i]]),"times")
+        length = []
+        try:
+            length.append(len(file_data[names[i]]["A"]))
+        except KeyError:
+            pass
+        try:
+            length.append(len(file_data[names[i]]["E"]))
+        except KeyError:
+            pass
+        try:
+            length.append(len(file_data[names[i]]["B"]))
+        except KeyError:
+            pass
+
+        sum_is = 0
+        for g in range(len(length)):
+            sum_is += length[g]
+        print("Found :",names[i],sum_is,"times")
 
 def present_publics():
     user_input = input().upper()
     names = []
-    print("\nType the number in front of your wanted vanity go get mnemonic.")
+    print("\nType the number in front of your wanted vanity to get mnemonic.")
     print("")
     if user_input not in file_data:
         print("The vanity '",user_input,"' was not an option. Exiting.",sep="")
@@ -39,26 +64,50 @@ def present_publics():
     for vanity in file_data:
         names.append(vanity)
         if user_input == vanity:
-            for i in range(len(file_data[vanity])):
-                print(i,":",file_data[vanity][str(i)]["public key"])
+            try:
+                temp = file_data[vanity]["A"]
+                print("\nVanity addresses with '"+vanity+"' anywhere.")
+                for i in range(len(temp)):
+                    print("A"+str(i)+":",temp[str(i)]["public key"])
+            except KeyError:
+                pass
+
+            try:
+                temp = file_data[vanity]["E"]
+                print("\nVanity addresses with '"+vanity+"' at the end.")
+                for i in range(len(temp)):
+                    print("E"+str(i)+":",temp[str(i)]["public key"])
+            except KeyError:
+                pass
+
+            try:
+                temp = file_data[vanity]["B"]
+                print("\nVanity addresses with '"+vanity+"' at the beginning.")
+                for i in range(len(temp)):
+                    print("B"+str(i)+":",temp[str(i)]["public key"])
+            except KeyError:
+                pass
+            
     return user_input
 
 def present_privates(vanity):
     user_input = input()
     try:
+        key = file_data[vanity][str(user_input[0]).upper()][str(user_input[1:])]["private key"]
         print("\nThe private mnemonic will now be shown. Make sure noone is watching")
         print("Press any key to continue")
         user_input_2 = input()
         if user_input_2 != None:
-            print(algosdk.mnemonic.from_private_key(file_data[vanity][str(user_input)]["private key"]),sep="")
+            print(algosdk.mnemonic.from_private_key(key))
+
             print("\nPress any key again to show private key")
             user_input_2 = input()
             if user_input_2 != None:
-                print(file_data[vanity][str(user_input)]["private key"],"\n",sep="")
+                print(key,"\n")
                 print("REMEMBER! Keep these safe and private. Anyone with your key can spend your money.")
                 print("It is advised to write the mnemonic on a piece of paper and hide it somewhere safe.")
                 print("")
     except KeyError as e:
-        print("That input {} was not an option. Exiting.".format(e))
+        print("The input {} was not an option. Exiting.".format(e))
 
 program()
