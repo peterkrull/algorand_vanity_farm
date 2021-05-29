@@ -91,6 +91,7 @@ def present_publics():
     return user_input
 
 def present_privates(vanity):
+    print("\nPlease type the letter and number in front your wanted address.")
     user_input = input()
     try:
         key = file_data[vanity][str(user_input[0]).upper()][str(user_input[1:])]["private key"]
