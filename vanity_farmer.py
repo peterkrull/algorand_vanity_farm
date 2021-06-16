@@ -220,15 +220,57 @@ def get_running_time():
 
 # Print information
 def info_print():
+    prev_count = 0
+    array_count = []
+    array_circ = 0
+    array_sum = 0
+    avg_over = 60 # seconds
     while True:
+
+        # Average speed over avg_over seconds
+        if len(array_count) < avg_over:
+            if len(array_count) == 0:
+                time.sleep(1)
+            array_count.append(count.value-prev_count)
+            array_sum = 0
+            for i in range(len(array_count)):
+                array_sum += array_count[i]
+        else:
+            if array_circ < avg_over:
+                array_count[array_circ] = count.value-prev_count
+                array_circ += 1
+
+            elif array_circ == avg_over:
+                array_circ = 0
+                array_count[array_circ] = count.value-prev_count
+            array_sum = 0
+            for i in range(avg_over):
+                array_sum += array_count[i]
+        avg_speed = int(array_sum/len(array_count))
+        
         print("\n\nTimer : "+ get_running_time())
-        print("Speed : "+str(int(count.value/running_time))+" a/s")
+        print("Speed : "+str(avg_speed)+" a/s")
+
+        print("4 chr : %.1f"%((pow(32,4)/avg_speed))+" seconds")
+        print("5 chr : %.1f"%((pow(32,5)/avg_speed)/60)+" minutes")
+        print("6 chr : %.1f"%((pow(32,6)/avg_speed)/3600)+" hours")
+        print("7 chr : %.1f"%((pow(32,7)/avg_speed)/86400)+" days")
+        print("8 chr : %.1f"%((pow(32,8)/avg_speed)/604800)+" weeks")
+
         if count.value < 1000000:
             print("Tried : "+str(count.value))
         else:
             print("Tried : "+str(int(count.value/100000)/10)+" M")
-        print("Found : "+str(found.value))
+
+        if found.value > 1:
+            print("Found : "+str(found.value)+" matches")
+        elif found.value == 1:
+            print("Found : "+str(found.value)+" match")
+        else:
+            print("Found : no matches")
+            
         load_config()
+        prev_count = count.value
         time.sleep(1)
         
 
