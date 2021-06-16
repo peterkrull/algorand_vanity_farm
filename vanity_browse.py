@@ -56,7 +56,6 @@ def present_names():
 def present_publics():
     user_input = input().upper()
     names = []
-    print("\nType the number in front of your wanted vanity to get mnemonic.")
     print("")
     if user_input not in file_data:
         print("The vanity '",user_input,"' was not an option. Exiting.",sep="")
@@ -99,16 +98,16 @@ def present_privates(vanity):
         print("Press any key to continue")
         user_input_2 = input()
         if user_input_2 != None:
+            print("--------------------------------------------------------------")
             print(algosdk.mnemonic.from_private_key(key))
-
-            print("\nPress any key again to show private key")
-            user_input_2 = input()
-            if user_input_2 != None:
-                print(key,"\n")
-                print("REMEMBER! Keep these safe and private. Anyone with your key can spend your money.")
-                print("It is advised to write the mnemonic on a piece of paper and hide it somewhere safe.")
-                print("")
+            print("\n",key,sep="")
+            print("--------------------------------------------------------------")
+            print("\nREMEMBER! Keep these safe and private. Anyone with your keys can spend your money.")
+            print("It is advised to write the mnemonic on a piece of paper and hide it somewhere safe.")
+            print("")
     except KeyError as e:
         print("The input {} was not an option. Exiting.".format(e))
+    except IndexError as e:
+         print("No valid input was given. Exiting.")
 
 program()
