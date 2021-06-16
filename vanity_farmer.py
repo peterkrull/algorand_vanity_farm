@@ -248,14 +248,9 @@ def info_print():
                 array_sum += array_count[i]
         avg_speed = int(array_sum/len(array_count))
         
-        print("\n\nTimer : "+ get_running_time())
+        print("\n\n\nStats for current session.")
+        print("Timer : "+ get_running_time())
         print("Speed : "+str(avg_speed)+" a/s")
-
-        print("4 chr : %.1f"%((pow(32,4)/avg_speed))+" seconds")
-        print("5 chr : %.1f"%((pow(32,5)/avg_speed)/60)+" minutes")
-        print("6 chr : %.1f"%((pow(32,6)/avg_speed)/3600)+" hours")
-        print("7 chr : %.1f"%((pow(32,7)/avg_speed)/86400)+" days")
-        print("8 chr : %.1f"%((pow(32,8)/avg_speed)/604800)+" weeks")
 
         if count.value < 1000000:
             print("Tried : "+str(count.value))
@@ -269,6 +264,13 @@ def info_print():
         else:
             print("Found : no matches")
             
+        print("\nAverage time between match.")
+        print("4 chars : %.1f"%((pow(32,4)/avg_speed))+" seconds")
+        print("5 chars : %.1f"%((pow(32,5)/avg_speed)/60)+" minutes")
+        print("6 chars : %.1f"%((pow(32,6)/avg_speed)/3600)+" hours")
+        print("7 chars : %.1f"%((pow(32,7)/avg_speed)/86400)+" days")
+        print("8 chars : %.1f"%((pow(32,8)/avg_speed)/604800)+" weeks")
+
         load_config()
         prev_count = count.value
         time.sleep(1)
