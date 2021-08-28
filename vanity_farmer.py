@@ -66,7 +66,7 @@ def save_address(queue,saving):
         if queue.qsize() == 0:
             saving.value = False
             time.sleep(0.01)
-        
+
 
 # Save private/public key pair to JSON file        
 def save_to_json(public_key, private_key, vanity, location):
@@ -128,7 +128,7 @@ def load_config():
     ending = False
     anywhere = False
 
-    while 1:
+    while True:
 
         # Reload config every second
         time.sleep(1)
@@ -209,7 +209,14 @@ def signal_handler(sig, frame):
         print("No match in " + str(count.value) + " attempts and " + get_running_time(running_time, start_time))
     else:
         print("Found " + str(found.value) + " matches in " + str(count.value) + " attempts and " + get_running_time(running_time, start_time))
-        print("Average address generation : "+str(int(count.value/running_time))+" addr/s")
+        
+        genrate = ""
+        try:
+            genrate = str(int(count.value/running_time.value))
+        except ZeroDivisionError:
+            generate = "Calculaing"
+
+        print("Average address generation : "+genrate+" addr/s")
     exit()
 
 # Calculate and format running time
@@ -297,8 +304,9 @@ def terminate_processes():
     l.terminate()    
 
     # Wait for saving process to finish
-    if not saving:
-        s.terminate()
+    while saving.value:
+        pass
+    s.terminate()
 
 
 # Get correct number threads
