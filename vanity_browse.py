@@ -95,7 +95,7 @@ def present_privates(vanity):
     try:
         key = file_data[vanity][str(user_input[0]).upper()][str(user_input[1:])]["private key"]
         print("\nThe private mnemonic will now be shown. Make sure noone is watching")
-        print("Press any key to continue")
+        print("Press the enter key to continue")
         user_input_2 = input()
         if user_input_2 != None:
             print("--------------------------------------------------------------")
@@ -105,7 +105,7 @@ def present_privates(vanity):
             print("\nREMEMBER! Keep these safe and private. Anyone with your keys can spend your money.")
             print("It is advised to write the mnemonic on a piece of paper and hide it somewhere safe.")
             print("")
-            print("Press any key to exit program.")
+            print("Press the enter key to exit program.")
         user_input_2 = input()
         if user_input_2 != None:
             pass
