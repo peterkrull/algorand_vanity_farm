@@ -105,6 +105,11 @@ def present_privates(vanity):
             print("\nREMEMBER! Keep these safe and private. Anyone with your keys can spend your money.")
             print("It is advised to write the mnemonic on a piece of paper and hide it somewhere safe.")
             print("")
+            print("Press any key to exit program.")
+        user_input_2 = input()
+        if user_input_2 != None:
+            pass
+            
     except KeyError as e:
         print("The input {} was not an option. Exiting.".format(e))
     except IndexError as e:
