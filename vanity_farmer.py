@@ -176,6 +176,7 @@ def load_config():
             print("Please place your wanted vanities in the 'vanity_config' file.")
             print("A recommended length is between 4 to 6 characters.\n")
             print("When you are done, execute this program again.\n")
+            input()
             exit()
 
 
