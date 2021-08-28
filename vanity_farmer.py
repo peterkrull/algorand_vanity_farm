@@ -25,6 +25,9 @@ def find_address(queue,in_count,in_found,vanities,in_place):
     while True: # Thread loop
  
         # Wait for counter semaphore to clear
+        # TODO Instead of waiting for the value to be available, each thread should have its own value.
+        # This value, for each thread, would then be added afterwards by another thread.
+        # It is not yet known how much of an effect this has on throughput.
         with in_count.get_lock():
             in_count.value += 1
 
@@ -118,6 +121,15 @@ def generate_new_data(public_key, private_key, vanity, location, acc_count):
     }
 
 
+def load_single_config(file_data,label,value):
+    try:
+        temp = file_data[label]
+        return temp
+    except KeyError:
+        file_data.update({label : value})
+        with open("vanity_config",'w') as file:
+            json.dump(file_data,file)
+
 # Load user configuration
 def load_config():
 
@@ -128,75 +140,43 @@ def load_config():
     ending = False
     anywhere = False
 
-    while True:
+    print("Loading configuration file..")
 
-        # Reload config every second
-        time.sleep(1)
+    try:
+        # Load configuration from file
+        file_data = json.load(open("vanity_config",'r'))
+        
+        # Fetch vanity list
+        vanities = load_single_config(file_data,"vanity",vanities)
+        # Fetch threads configuration
+        max_threads = load_single_config(file_data,"max_threads",max_threads)
+        # Fetch first only configuration
+        beginning = load_single_config(file_data,"vanity_first",beginning)
+        # Fetch first only configuration
+        ending = load_single_config(file_data,"vanity_last",ending)
+        # Fetch first only configuration
+        anywhere = load_single_config(file_data,"vanity_anywhere",anywhere)
 
-        try:
+        return vanities,max_threads,beginning,ending,anywhere
+        
+    # Handle missing file
 
-            # Load configuration from file
-            file_data = json.load(open("vanity_config",'r'))
+    except FileNotFoundError as e:
+        with open("vanity_config",'x') as file:
             
-            # Fetch vanity list
-            try:
-                vanities = file_data["vanity"]
-            except KeyError:
-                file_data.update({"vanity" : vanities})
-                with open("vanity_config",'w') as file:
-                    json.dump(file_data,file)
-            
-            # Fetch threads configuration
-            try:
-                max_threads = file_data["max_threads"]
-            except KeyError:
-                file_data.update({"max_threads":max_threads})
-                with open("vanity_config",'w') as file:
-                    json.dump(file_data,file) 
-            
-            # Fetch first only configuration
-            try:
-                beginning = file_data["vanity_first"]   
-            except KeyError:
-                file_data.update({"vanity_first":beginning})
-                with open("vanity_config",'w') as file:
-                    json.dump(file_data,file) 
-
-            # Fetch first only configuration
-            try:
-                ending = file_data["vanity_last"]   
-            except KeyError:
-                file_data.update({"vanity_last":ending})
-                with open("vanity_config",'w') as file:
-                    json.dump(file_data,file) 
-
-            # Fetch first only configuration
-            try:
-                anywhere = file_data["vanity_anywhere"]   
-            except KeyError:
-                file_data.update({"vanity_anywhere":anywhere})
-                with open("vanity_config",'w') as file:
-                    json.dump(file_data,file) 
-
-            return vanities,max_threads,beginning,ending,anywhere
-        # Handle missing file
-
-        except FileNotFoundError as e:
-            with open("vanity_config",'x') as file:
-                
-                new_data = {
-                    "vanity" : vanities,
-                    "max_threads" : max_threads,
-                    "vanity_first" : beginning,
-                    "vanity_last" : ending,
-                    "vanity_anywhere" : anywhere
-                    }
-                json.dump(new_data,file)
-                print("\nIt looks like this is your first time running Algorand Vanity Farmer.")
-                print("Please place your wanted vanities in the 'vanity_config' file.")
-                print("A recommended length is between 4 to 6 characters.\n")
-                print("When you are done, execute this program again.\n")
-                exit()
+            new_data = {
+                "vanity" : vanities,
+                "max_threads" : max_threads,
+                "vanity_first" : beginning,
+                "vanity_last" : ending,
+                "vanity_anywhere" : anywhere
+                }
+            json.dump(new_data,file)
+            print("\nIt looks like this is your first time running Algorand Vanity Farmer.")
+            print("Please place your wanted vanities in the 'vanity_config' file.")
+            print("A recommended length is between 4 to 6 characters.\n")
+            print("When you are done, execute this program again.\n")
+            exit()
 
 
 # Handler for user ctrl-c action
@@ -300,8 +280,7 @@ def terminate_processes():
     for j in jobs:
         j.terminate()
 
-    i.terminate()
-    l.terminate()    
+    i.terminate()  
 
     # Wait for saving process to finish
     while saving.value:
@@ -350,10 +329,6 @@ if __name__ == '__main__':
     # Spawns process to print info
     i = Process(target=info_print,args=(count,found,running_time, start_time))
     i.start()
-
-    # Spawns process to load configuration file
-    l = Process(target=load_config)#, args=(vanities,max_threads,place))
-    l.start()
 
     # capture ctrl-c so we can report attempts and running time
     signal.signal(signal.SIGINT, signal_handler)
