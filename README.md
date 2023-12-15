@@ -1,4 +1,11 @@
+
+# Updated version
+For an updated and improved, ultra-fast version implemented in Rust see [algo-vanity-rs](https://github.com/peterkrull/algo-vanity-rs)
+
+---
+
 # Algorand Vanity address farming tool
+
 This automated Algorand vanity address farming tool written in Python makes it easy to look for a single or multiple interesting vanity addresses to be used on the Algorand blockchain. The tools require that the Algorand SDK for Python is installed to generate the public/private key pair.
 
 ## Prerequisites
